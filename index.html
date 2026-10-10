@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reticle — Vise juste.</title>
+<meta name="description" content="Reticle affiche un réticule personnalisé, au pixel près, par-dessus tous tes jeux. Import des codes CS2 et Valorant. Gratuit pour Windows.">
+<meta property="og:title" content="Reticle — Vise juste.">
+<meta property="og:description" content="Un réticule net, au centre exact de ton écran, par-dessus tous tes jeux.">
+<meta property="og:image" content="assets/site-3d.png">
+<meta name="theme-color" content="#0d0e10">
+<link rel="icon" type="image/png" href="assets/icon.png">
+<link rel="preload" href="fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Intro -->
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="ld-xh"><span class="ld-l ld-t"></span><span class="ld-l ld-b"></span><span class="ld-l ld-lf"></span><span class="ld-l ld-r"></span></div>
+  <span class="ld-count" id="ldCount">000</span>
+  <span class="ld-txt">Calibrage du réticule</span>
+</div>
+
+<!-- Règle graduée : position de la page en pixels -->
+<div class="ruler" aria-hidden="true">
+  <div class="ticks" id="ticks"></div>
+  <div class="ruler-labels" id="rulerLabels"></div>
+  <div class="ruler-mark"><span id="rulerY">0</span></div>
+</div>
+
+<!-- Repères de sections -->
+<nav class="sections" id="sections" aria-label="Sections">
+  <a href="#top" data-sec="top"><span>Accueil</span><i></i></a>
+  <a href="#app" data-sec="app"><span>Éditeur</span><i></i></a>
+  <a href="#presets" data-sec="presets"><span>Préréglages</span><i></i></a>
+  <a href="#import" data-sec="import"><span>Import</span><i></i></a>
+  <a href="#steps" data-sec="steps"><span>Mode d'emploi</span><i></i></a>
+  <a href="#faq" data-sec="faq"><span>FAQ</span><i></i></a>
+  <a href="#download" data-sec="download"><span>Télécharger</span><i></i></a>
+</nav>
+
+<header class="nav" id="nav">
+  <a href="#top" class="brand" aria-label="Reticle, retour en haut">
+    <span class="logo"><svg viewBox="0 0 100 100"><g stroke="#0d0e10" stroke-width="11" stroke-linecap="round"><line x1="50" y1="8" x2="50" y2="34"/><line x1="50" y1="66" x2="50" y2="92"/><line x1="8" y1="50" x2="34" y2="50"/><line x1="66" y1="50" x2="92" y2="50"/></g></svg></span>
+    Reticle
+  </a>
+  <nav class="links">
+    <a href="#app">Éditeur</a><a href="#presets">Préréglages</a><a href="#import">Import</a><a href="#faq">FAQ</a>
+  </nav>
+  <a class="nbtn" href="#download">Télécharger</a>
+</header>
+
+<main>
+  <!-- HERO : stand de tir en 3D -->
+  <section class="hero" id="top" data-sec-id="top">
+    <canvas class="hero-gl" id="heroGL" aria-hidden="true"></canvas>
+    <span class="rule rh" id="ruleH"></span><span class="rule rv" id="ruleV"></span>
+
+    <div class="hero-xh" id="heroXh">
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <g stroke="#000" stroke-width="8"><line x1="50" y1="10" x2="50" y2="38"/><line x1="50" y1="62" x2="50" y2="90"/><line x1="10" y1="50" x2="38" y2="50"/><line x1="62" y1="50" x2="90" y2="50"/></g>
+        <g stroke="#c6ff3d" stroke-width="4"><line x1="50" y1="10" x2="50" y2="38"/><line x1="50" y1="62" x2="50" y2="90"/><line x1="10" y1="50" x2="38" y2="50"/><line x1="62" y1="50" x2="90" y2="50"/></g>
+        <rect x="47" y="47" width="6" height="6" fill="#c6ff3d" stroke="#000" stroke-width="2"/>
+      </svg>
+      <span class="coord" id="heroCoord">x 1280 · y 720</span>
+    </div>
+
+    <h1 class="title" aria-label="Reticle">
+      <span class="w w1"><span class="wi">Reti</span></span>
+      <span class="w w2"><span class="wi">cle</span></span>
+    </h1>
+
+    <div class="hero-sub" id="heroSub">
+      <p>Un réticule net, au centre exact de ton écran,<br>par-dessus tous tes jeux.</p>
+      <div class="cta-row">
+        <a class="dl magnetic" href="#download">
+          <svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+          <span>Télécharger pour Windows</span><small>v0.2 · gratuit</small>
+        </a>
+      </div>
+    </div>
+    <div class="scroll-hint" id="scrollHint"><span></span>Défile</div>
+    <div class="hud-r" id="hudR"><span>Stand d'entraînement</span><span id="hitCount">00</span><span>cibles touchées</span></div>
+  </section>
+
+  <!-- ÉDITEUR -->
+  <section class="showcase" id="app" data-sec-id="app">
+    <div class="wrap">
+      <div class="sc-head">
+        <div>
+          <p class="kick" data-reveal>L'éditeur</p>
+          <h2 class="split" data-split>Chaque pixel, <span class="mut">sous contrôle.</span></h2>
+        </div>
+        <p class="lead sc-lead" data-reveal>Une interface pensée pour régler vite et précisément, avec un aperçu qui montre exactement ce que tu verras en jeu.</p>
+      </div>
+
+      <div class="sc-grid">
+        <div class="sc-tabs" role="tablist">
+          <button class="sct" role="tab" data-i="0"><span class="sct-n">01</span><span class="sct-t"><b>Vue 3D</b><span>Le réticule décomposé en couches : contour, lignes et rendu final.</span></span><span class="sct-bar"><i></i></span></button>
+          <button class="sct" role="tab" data-i="1"><span class="sct-n">02</span><span class="sct-t"><b>Vue 2D, au pixel</b><span>Une grille où chaque case est un vrai pixel de ton écran.</span></span><span class="sct-bar"><i></i></span></button>
+          <button class="sct" role="tab" data-i="2"><span class="sct-n">03</span><span class="sct-t"><b>Bibliothèque</b><span>12 préréglages, tes réticules enregistrés et l'import de codes.</span></span><span class="sct-bar"><i></i></span></button>
+        </div>
+
+        <div class="sc-view">
+          <div class="tilt" id="tilt">
+            <div class="window" id="appWindow">
+              <img class="shot" src="assets/site-3d.png" alt="Éditeur Reticle en vue 3D">
+              <img class="shot" src="assets/site-2d.png" alt="Éditeur Reticle en vue 2D pixel par pixel">
+              <img class="shot" src="assets/site-lib.png" alt="Bibliothèque de réticules de Reticle">
+              <div class="spots" id="spots"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRÉRÉGLAGES -->
+  <section class="presets" id="presets" data-sec-id="presets">
+    <div class="wrap">
+      <p class="kick" data-reveal>Préréglages</p>
+      <h2 class="split" data-split>Douze styles. <span class="mut">Un seul clic.</span></h2>
+    </div>
+    <div class="marquee" id="marquee"><div class="track" id="track"></div></div>
+    <div class="wrap mlabel" data-reveal><span>Survole une carte pour l'incliner</span><span>Classique · Valorant · Néon · Diagonal · Holo…</span></div>
+  </section>
+
+  <!-- IMPORT -->
+  <section class="import" id="import" data-sec-id="import">
+    <div class="wrap imp-grid">
+      <div class="imp-txt">
+        <p class="kick" data-reveal>Import</p>
+        <h2 class="split" data-split>Ton code CS2 ou Valorant ? <span class="mut">Colle-le.</span></h2>
+        <p class="lead" data-reveal>Reticle décode les codes de partage de CS2 (anciens et nouveaux formats) et de Valorant, puis convertit les tailles pour ta résolution. Essaie ici, c'est le vrai moteur de l'appli.</p>
+        <div class="chips" data-reveal>
+          <button class="chip" data-code="CSGO-Cn37R-YE7vo-pLCAL-aURmZ-z6zkG">Exemple CS2</button>
+          <button class="chip" data-code="0;P;c;5;h;0;0l;4;0o;2;0a;1;0f;0;1b;0">Exemple Valorant</button>
+          <button class="chip" data-code="CSGO-MnUCC-89iG7-2cVar-wy7Yn-amCpF">Point CS2</button>
+          <button class="chip" data-code="0;P;c;1;o;1;d;1;z;3;0b;0;1b;0">Point Valorant</button>
+        </div>
+      </div>
+      <div class="demo" id="demo" data-reveal>
+        <div class="demo-top"><span class="dots"><i></i><i></i><i></i></span><span class="mono">Importer un réticule</span></div>
+        <textarea id="codeIn" spellcheck="false" placeholder="Colle un code CSGO-…, CS… ou 0;P;…" aria-label="Code de réticule"></textarea>
+        <div class="demo-res">
+          <div class="demo-prev"><canvas id="codePrev" width="1" height="1"></canvas></div>
+          <div class="demo-info">
+            <span class="badge" id="codeBadge">En attente d'un code</span>
+            <dl id="codeSpecs">
+              <div><dt>Longueur</dt><dd>—</dd></div><div><dt>Écart</dt><dd>—</dd></div>
+              <div><dt>Épaisseur</dt><dd>—</dd></div><div><dt>Couleur</dt><dd>—</dd></div>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ÉTAPES -->
+  <section class="steps" id="steps" data-sec-id="steps">
+    <div class="wrap">
+      <p class="kick" data-reveal>Mode d'emploi</p>
+      <h2 class="split" data-split>Trois étapes. <span class="mut">Zéro prise de tête.</span></h2>
+      <div class="step-grid">
+        <div class="step"><span class="line"></span><b>01</b><h3>Télécharge</h3><p>Un seul fichier, installé en quelques secondes. Reticle se lance ensuite avec Windows, discrètement.</p></div>
+        <div class="step"><span class="line"></span><b>02</b><h3>Règle ou importe</h3><p>Ajuste chaque pixel, choisis un préréglage ou colle ton code CS2 / Valorant.</p></div>
+        <div class="step"><span class="line"></span><b>03</b><h3>Appuie sur F8</h3><p>Ton réticule apparaît au centre exact de l'écran, par-dessus n'importe quel jeu.</p></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><b><span data-count="1">0</span> px</b><span>de précision, sans flou</span></div>
+        <div class="stat"><b><span data-count="12">0</span></b><span>préréglages inclus</span></div>
+        <div class="stat"><b><span data-count="3">0</span></b><span>formats de codes importés</span></div>
+        <div class="stat"><b>F8</b><span>pour afficher / masquer</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq" data-sec-id="faq">
+    <div class="wrap faq-grid">
+      <div>
+        <p class="kick" data-reveal>FAQ</p>
+        <h2 class="split" data-split>Questions <span class="mut">fréquentes.</span></h2>
+      </div>
+      <div class="qa-list">
+        <div class="qa" data-reveal><button class="q">Est-ce que ça marche avec tous les jeux ?<i></i></button><div class="a"><p>Oui, tant que le jeu est en mode « Fenêtré sans bordure » (ou « Plein écran fenêtré »). En plein écran exclusif, Windows ne laisse aucune fenêtre s'afficher par-dessus le jeu.</p></div></div>
+        <div class="qa" data-reveal><button class="q">Est-ce que Reticle touche aux fichiers du jeu ?<i></i></button><div class="a"><p>Non. Reticle ne lit ni ne modifie le jeu : c'est une fenêtre transparente posée par-dessus l'écran. Vérifie quand même le règlement des compétitions auxquelles tu participes.</p></div></div>
+        <div class="qa" data-reveal><button class="q">Windows affiche « Windows a protégé votre ordinateur »<i></i></button><div class="a"><p>C'est normal pour une appli indépendante qui n'est pas encore signée. Clique sur « Informations complémentaires » puis « Exécuter quand même ». Le message n'apparaît qu'une fois.</p></div></div>
+        <div class="qa" data-reveal><button class="q">Comment fermer complètement l'appli ?<i></i></button><div class="a"><p>La croix de la fenêtre la laisse tourner en arrière-plan, pour garder ton réticule. Pour l'arrêter, fais un clic droit sur l'icône près de l'horloge puis « Quitter », ou utilise « Quitter Reticle » dans les réglages.</p></div></div>
+        <div class="qa" data-reveal><button class="q">Ça existe sur Mac ?<i></i></button><div class="a"><p>Pas pour l'instant : Reticle est disponible pour Windows 10 et 11 (64 bits).</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TÉLÉCHARGEMENT -->
+  <section class="final" id="download" data-sec-id="download">
+    <div class="final-xh" aria-hidden="true"><span class="rule rh"></span><span class="rule rv"></span></div>
+    <h2 class="final-title"><span class="ft">Reti</span><span class="ft acc">cle</span></h2>
+    <a class="dl big magnetic" id="dlBtn" href="https://github.com/clocloRA35132125/reticle/releases/latest/download/Reticle-Setup.exe">
+      <svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+      <span>Télécharger Reticle</span>
+    </a>
+    <div class="specs" data-reveal>
+      <div><span>Fichier</span><b>Reticle-Setup.exe</b></div>
+      <div><span>Version</span><b>0.2.0</b></div>
+      <div><span>Taille</span><b>116 Mo</b></div>
+      <div><span>Système</span><b>Windows 10 / 11 · 64 bits</b></div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <span>© 2026 Reticle</span>
+  <span class="mono">Fait pixel par pixel.</span>
+  <a href="#top">Retour en haut ↑</a>
+</footer>
+
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/lenis.min.js"></script>
+<script src="vendor/crosshair.js"></script>
+<script src="main.js"></script>
+<script type="module" src="scene.js"></script>
+</body>
+</html>
