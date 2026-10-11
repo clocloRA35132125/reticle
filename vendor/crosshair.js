@@ -5,6 +5,7 @@
     color: '#c6ff3d', opacity: 100,
     lines: true, orient: 'plus', armTop: true, armRight: true, armBottom: true, armLeft: true,
     length: 6, gap: 3, thickness: 2, lineAlpha: 100,
+    split: false, vLength: 6, vThickness: 2, // lignes verticales réglées à part
     outer: false, outerLength: 3, outerGap: 12, outerThickness: 2, outerAlpha: 50,
     centerDot: true, dotSize: 2, dotAlpha: 100,
     circle: false, circleRadius: 12, circleThickness: 1,
@@ -44,26 +45,31 @@
 
   /* ---------- Géométrie ---------- */
 
-  function armRects(out, s, gap, len, t) {
-    const a = -Math.floor(t / 2), b = a + t - 1;
+  // hLen/hT : branches horizontales, vLen/vT : branches verticales
+  function armRects(out, s, gap, hLen, hT, vLen = hLen, vT = hT) {
+    const ah = -Math.floor(hT / 2), bh = ah + hT - 1;
+    const av = -Math.floor(vT / 2), bv = av + vT - 1;
     if (s.orient === 'x') {
       // Diagonales : un carré t×t par pas, branches tournées de 45° dans le sens horaire
-      const dirs = [[s.armTop, 1, -1], [s.armRight, 1, 1], [s.armBottom, -1, 1], [s.armLeft, -1, -1]];
-      for (const [on, dx, dy] of dirs) {
+      const dirs = [[s.armTop, 1, -1, vLen, vT], [s.armRight, 1, 1, hLen, hT], [s.armBottom, -1, 1, vLen, vT], [s.armLeft, -1, -1, hLen, hT]];
+      for (const [on, dx, dy, len, t] of dirs) {
         if (!on) continue;
+        const a = -Math.floor(t / 2);
         for (let i = gap + 1; i <= gap + len; i++) out.push({ x: a + i * dx, y: a + i * dy, w: t, h: t });
       }
       return;
     }
-    if (s.armTop) out.push({ x: a, y: a - gap - len, w: t, h: len });
-    if (s.armBottom) out.push({ x: a, y: b + gap + 1, w: t, h: len });
-    if (s.armLeft) out.push({ x: a - gap - len, y: a, w: len, h: t });
-    if (s.armRight) out.push({ x: b + gap + 1, y: a, w: len, h: t });
+    // L'écart est mesuré depuis le bloc central formé par l'épaisseur de l'autre axe
+    if (s.armTop) out.push({ x: av, y: ah - gap - vLen, w: vT, h: vLen });
+    if (s.armBottom) out.push({ x: av, y: bh + gap + 1, w: vT, h: vLen });
+    if (s.armLeft) out.push({ x: av - gap - hLen, y: ah, w: hLen, h: hT });
+    if (s.armRight) out.push({ x: bv + gap + 1, y: ah, w: hLen, h: hT });
   }
+  const vert = (s) => (s.split ? [s.vLength, s.vThickness] : [s.length, s.thickness]);
 
   function groups(s) {
     const g = { lines: [], outer: [], dot: [] };
-    if (s.lines) armRects(g.lines, s, s.gap, s.length, s.thickness);
+    if (s.lines) armRects(g.lines, s, s.gap, s.length, s.thickness, ...vert(s));
     if (s.outer) armRects(g.outer, s, s.outerGap, s.outerLength, s.outerThickness);
     if (s.centerDot) {
       const d = s.dotSize, h = Math.floor(d / 2);
@@ -75,7 +81,10 @@
   // Distance max du centre, utile pour dimensionner un canvas
   function extent(s) {
     let r = 1;
-    if (s.lines) r = Math.max(r, s.gap + s.length + s.thickness);
+    if (s.lines) {
+      const [vl, vt] = vert(s);
+      r = Math.max(r, s.gap + Math.max(s.length, vl) + Math.max(s.thickness, vt));
+    }
     if (s.outer) r = Math.max(r, s.outerGap + s.outerLength + s.outerThickness);
     if (s.circle) r = Math.max(r, s.circleRadius + s.circleThickness);
     if (s.centerDot) r = Math.max(r, s.dotSize);
@@ -261,6 +270,7 @@
       outline: num('h', 1) !== 0, outlineThickness: clamp(Math.round(num('t', 1)), 1, 3), outlineAlpha: clamp(Math.round(num('o', .5) * 100), 10, 100),
       centerDot: num('d', 0) === 1, dotSize: clamp(px(num('z', 2) * f, 1), 1, 8), dotAlpha: clamp(Math.round(num('a', 1) * 100), 10, 100),
       lines: num('0b', 1) !== 0, thickness: clamp(px(num('0t', 2) * f, 1), 1, 8), length: clamp(px(num('0l', 6) * f, 1), 1, 30),
+      split: num('0g', 0) === 1, vLength: clamp(px(num('0v', num('0l', 6)) * f, 1), 1, 30), vThickness: clamp(px(num('0t', 2) * f, 1), 1, 8),
       gap: clamp(px(num('0o', 3) * f), 0, 20), lineAlpha: clamp(Math.round(num('0a', .8) * 100), 10, 100),
       outer: num('1b', 1) !== 0, outerThickness: clamp(px(num('1t', 2) * f, 1), 1, 8), outerLength: clamp(px(num('1l', 2) * f, 1), 1, 20),
       outerGap: clamp(px(num('1o', 10) * f), 0, 30), outerAlpha: clamp(Math.round(num('1a', .35) * 100), 10, 100),
